@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 project(libsecp256k1 VERSION 1.0.0 LANGUAGES C CXX)
+set(LIBRARY_NAME secp256k1)
 
 # Add path for custom modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
@@ -31,17 +32,17 @@ include_directories(
 )
 
 # The library
-add_library(libsecp256k1 src/secp256k1.c)
+add_library(${LIBRARY_NAME} src/secp256k1.c)
 target_include_directories(
-		${PROJECT_NAME} INTERFACE
+		${LIBRARY_NAME} INTERFACE
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 
 # We need to link in GMP
 find_package(GMP)
 if(GMP_FOUND)
-	target_include_directories(libsecp256k1 PUBLIC ${GMP_INCLUDE_DIR})
-	target_link_libraries(libsecp256k1 ${GMP_LIBRARY})
+	target_include_directories(secp256k1 PUBLIC ${GMP_INCLUDE_DIR})
+	target_link_libraries(secp256k1 ${GMP_LIBRARY})
 	set(USE_NUM_GMP 1)
 	set(USE_FIELD_INV_NUM 1)
 	set(USE_SCALAR_INV_NUM 1)
@@ -89,7 +90,7 @@ endif()
 # Executable internal to secp256k1 need to have the HAVE_CONFIG_H define set.
 # For convenience, we wrap this into a function.
 function(link_secp256k1_internal NAME)
-	target_link_libraries(${NAME} libsecp256k1)
+	target_link_libraries(${NAME} secp256k1)
 	target_compile_definitions(${NAME} PRIVATE HAVE_CONFIG_H SECP256K1_BUILD)
 endfunction(link_secp256k1_internal)
 
@@ -149,23 +150,23 @@ if(SECP256K1_ECMULT_STATIC_PRECOMPUTATION)
         DEPENDS ecmult_static_context.h.stamp
     )
 
-    add_dependencies(libsecp256k1 ecmult_static_context)
+    add_dependencies(secp256k1 ecmult_static_context)
 
-    target_include_directories(libsecp256k1 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
+    target_include_directories(secp256k1 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src)
 endif()
 
 # Generate the config
 configure_file(src/libsecp256k1-config.h.cmake.in src/libsecp256k1-config.h ESCAPE_QUOTES)
-target_compile_definitions(libsecp256k1 PRIVATE HAVE_CONFIG_H SECP256K1_BUILD)
+target_compile_definitions(secp256k1 PRIVATE HAVE_CONFIG_H SECP256K1_BUILD)
 
 # Tests
 option(SECP256K1_BUILD_TEST "Build secp256k1's unit tests" ON)
 if(SECP256K1_BUILD_TEST)
 	include(TestSuite)
-	create_test_suite(libsecp256k1)
+	create_test_suite(secp256k1)
 
 	function(create_secp256k1_test NAME FILES)
-		add_test_to_suite(libsecp256k1 ${NAME} ${FILES})
+		add_test_to_suite(secp256k1 ${NAME} ${FILES})
 		link_secp256k1_internal(${NAME})
 	endfunction()
 
@@ -192,7 +193,7 @@ function(install_target targets config)
 endfunction()
 
 set(CONFIG_NAME "${PROJECT_NAME}Config")
-install_target(${PROJECT_NAME} ${CONFIG_NAME})
+install_target(${LIBRARY_NAME} ${CONFIG_NAME})
 
 install(
 		DIRECTORY ${CMAKE_SOURCE_DIR}/include/
