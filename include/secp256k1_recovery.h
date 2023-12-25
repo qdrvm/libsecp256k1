@@ -40,6 +40,13 @@ SECP256K1_API int secp256k1_ecdsa_recoverable_signature_parse_compact(
     int recid
 ) SECP256K1_ARG_NONNULL(1) SECP256K1_ARG_NONNULL(2) SECP256K1_ARG_NONNULL(3);
 
+SECP256K1_API void secp256k1_ecdsa_recoverable_signature_parse_compact_overflow(
+    const secp256k1_context* ctx,
+    secp256k1_ecdsa_recoverable_signature* sig,
+    const unsigned char *input64,
+    int recid
+) SECP256K1_ARG_NONNULL(1) SECP256K1_ARG_NONNULL(2) SECP256K1_ARG_NONNULL(3);
+
 /** Convert a recoverable signature into a normal signature.
  *
  *  Returns: 1
