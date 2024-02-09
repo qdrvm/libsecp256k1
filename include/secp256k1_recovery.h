@@ -40,6 +40,15 @@ SECP256K1_API int secp256k1_ecdsa_recoverable_signature_parse_compact(
     int recid
 ) SECP256K1_ARG_NONNULL(1) SECP256K1_ARG_NONNULL(2) SECP256K1_ARG_NONNULL(3);
 
+
+/** Parse a compact ECDSA signature (64 bytes + recovery id), allowing overflow.
+ *
+ *  Returns: 1 when the signature could be parsed, 0 otherwise
+ *  Args: ctx:     a secp256k1 context object
+ *  Out:  sig:     a pointer to a signature object
+ *  In:   input64: a pointer to a 64-byte compact signature
+ *        recid:   the recovery id (0, 1, 2 or 3)
+ */
 SECP256K1_API void secp256k1_ecdsa_recoverable_signature_parse_compact_overflow(
     const secp256k1_context* ctx,
     secp256k1_ecdsa_recoverable_signature* sig,

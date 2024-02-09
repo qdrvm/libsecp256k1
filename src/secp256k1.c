@@ -55,6 +55,12 @@
     } \
 } while(0)
 
+#define ARG_CHECK_NO_RETURN(cond) do { \
+    if (EXPECT(!(cond), 0)) { \
+        secp256k1_callback_call(&ctx->illegal_callback, #cond); \
+    } \
+} while(0)
+
 /* Note that whenever you change the context struct, you must also change the
  * context_eq function. */
 struct secp256k1_context_struct {
