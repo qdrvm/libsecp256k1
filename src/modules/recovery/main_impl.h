@@ -73,14 +73,15 @@ void secp256k1_ecdsa_recoverable_signature_parse_compact_overflow(const secp256k
 int secp256k1_ecdsa_recoverable_signature_serialize_compact(const secp256k1_context* ctx, unsigned char *output64, int *recid, const secp256k1_ecdsa_recoverable_signature* sig) {
     secp256k1_scalar r, s;
 
-    (void)ctx;
-    ARG_CHECK_NO_RETURN(sig != NULL);
-    ARG_CHECK_NO_RETURN(input64 != NULL);
-    ARG_CHECK_NO_RETURN(recid >= 0 && recid <= 3);
+    VERIFY_CHECK(ctx != NULL);
+    ARG_CHECK(output64 != NULL);
+    ARG_CHECK(sig != NULL);
+    ARG_CHECK(recid != NULL);
 
-    secp256k1_scalar_set_b32(&r, &input64[0], NULL);
-    secp256k1_scalar_set_b32(&s, &input64[32], NULL);
-    secp256k1_ecdsa_recoverable_signature_save(sig, &r, &s, recid);
+    secp256k1_ecdsa_recoverable_signature_load(ctx, &r, &s, recid, sig);
+    secp256k1_scalar_get_b32(&output64[0], &r);
+    secp256k1_scalar_get_b32(&output64[32], &s);
+    return 1;
 }
 
 int secp256k1_ecdsa_recoverable_signature_serialize_compact(const secp256k1_context* ctx, unsigned char *output64, int *recid, const secp256k1_ecdsa_recoverable_signature* sig) {
