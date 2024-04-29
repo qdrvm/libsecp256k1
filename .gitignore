@@ -44,6 +44,14 @@ coverage.*.html
 *.gcov
 
 build-aux/ar-lib
+build/
+cmake-build-*
+.idea/
+
+src/libsecp256k1-config.h
+src/libsecp256k1-config.h.in
+src/ecmult_static_context.h
+
 build-aux/config.guess
 build-aux/config.sub
 build-aux/depcomp
